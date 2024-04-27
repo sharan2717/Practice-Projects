@@ -1,0 +1,10 @@
+django-admin startproject web_project . --> to create project
+
+python manage.py runserver --> to run the file
+
+   DATABASES = {
+      'default': {
+          'ENGINE': 'djongo',
+          'NAME': 'your-database-name',
+      }
+  }   --> add this in settins.py for mongodb connection
