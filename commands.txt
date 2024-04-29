@@ -1,5 +1,9 @@
 django-admin startproject web_project . --> to create project
 
+python manage.py startproject projname . --> to create project without settings for database
+
+python manage.py startapp name --> to create an app
+
 python manage.py runserver --> to run the file
 
    DATABASES = {

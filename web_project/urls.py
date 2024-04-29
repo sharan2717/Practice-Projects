@@ -15,8 +15,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path,include
+from interviewerai.views import matching_endpoint, calculate_matching_score_route, whisper_ai
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('whisperAI/', whisper_ai, name='whisperAI'),
+    path('calculate_matching_score/', calculate_matching_score_route, name = 'calculate_matching_score_route'),
+    path('matching/', matching_endpoint, name = 'matching_endpoint'),
+    path('interviewerai/', include('interviewerai.urls')),
 ]
