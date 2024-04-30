@@ -3,3 +3,10 @@ redis
 types-redis
 uvicorn
 requests
+python-multipart
+pymongo
+pydantic
+requests
+google.generativeai
+PyPDF2
+markdown

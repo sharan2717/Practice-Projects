@@ -10,10 +10,8 @@ import requests
 import json
 from typing import List
 import google.generativeai as genai
-import prompt as p
-import Candidate as Candidate
-from threading import Thread
-from pymongo import MongoClient
+from . import prompt as p
+from . import Candidate as Candidate
 from gridfs import GridFS
 import markdown
 from PyPDF2 import PdfReader
@@ -40,11 +38,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-with open("config.json", "r") as config_file:
+with open("Practice-Projects\\config.json", "r") as config_file:
     config = json.load(config_file)
     WHISPER_AI_API_URL = config.get("API_URL")
     GOOGLE_API_KEY = config.get("GOOGLE_API_KEY")
     headers = config.get("headers")
+
 
     
 UPLOAD_FOLDER = 'audios'
@@ -85,28 +84,28 @@ async def transc(audio_file: UploadFile = File(...),
     return response_json
 
 genai.configure(api_key=GOOGLE_API_KEY)
-@app.post('/calculate_matching_score')
-async def calculate_matching_score_route(Actual_answer: str = Form(...), Candidate_answer: str = Form(...)):
-    try:
-        matching_score = calculate_matching_score(Actual_answer, Candidate_answer)
-        return {'matching_score': matching_score}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+# @app.post('/calculate_matching_score')
+# async def calculate_matching_score_route(Actual_answer: str = Form(...), Candidate_answer: str = Form(...)):
+#     try:
+#         matching_score = calculate_matching_score(Actual_answer, Candidate_answer)
+#         return {'matching_score': matching_score}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
 
 
-def calculate_matching_score(answers_generated, candiadate_ans):
-    try:
-        model = genai.GenerativeModel('gemini-pro')
-        chat = model.start_chat(history=[])
-        response = chat.send_message(answers_generated)
-        response = chat.send_message(candiadate_ans)
-        prompt= p.AnswerMatch_prompt()
-        response = chat.send_message(prompt)
-        output = response.text
-    except genai.types.generation_types.StopCandidateException as e:
-        print("Generation stopped:", e)
-        raise HTTPException(status_code=500, detail="Generation stopped")
-    return output
+# def calculate_matching_score(answers_generated, candiadate_ans):
+#     try:
+#         model = genai.GenerativeModel('gemini-pro')
+#         chat = model.start_chat(history=[])
+#         response = chat.send_message(answers_generated)
+#         response = chat.send_message(candiadate_ans)
+#         prompt= p.AnswerMatch_prompt()
+#         response = chat.send_message(prompt)
+#         output = response.text
+#     except genai.types.generation_types.StopCandidateException as e:
+#         print("Generation stopped:", e)
+#         raise HTTPException(status_code=500, detail="Generation stopped")
+#     return output
 
 
 @app.post('/matching')
@@ -144,7 +143,7 @@ def generate_questions(Topic,Experience,No_of_questions):
 
 
 @app.get('/generate-interview-questions')
-async def get_questions(topic: str, experience: str, no_of_questions: int, background_tasks: BackgroundTasks):
+async def get_questions(topic: str, experience: str, no_of_questions: int, background_tasks: BackgroundTasks): #QueryParams
         
     background_tasks.add_task(generate_questions, topic, experience, no_of_questions)
     return generate_questions(topic, experience, no_of_questions), 200
@@ -216,32 +215,9 @@ async def process_resume(resume: UploadFile = File(...), jd: UploadFile = File(.
         resume_text = preprocess_text(resume_text)
         jd_text = preprocess_text(jd_text)
         
-        resume_prompt = "Create a summary of the provided resume text that highlights the Candidate Name, educational qualifications, technical skills, and experience in organizations of the candidate. Give a single paragraph summarizing the required fields so that it can be used to match a job description. Here is the text:"
-        jd_prompt = "Give a detailed summary of the provided job description text that highlights the requirements for the specific position. Provide a single paragraph summary of the required skills for the job that can be matched with the candidate's resume summary. Here is the text:"
-        match_prompt = """I have provided a job description and a resume summary. I need you to match the semantic context of both 
-        the summaries highlighting the candidate's skills and Job description requirements. Keep a strict matching score such that if 
-        the requirements match less than the score should be less.
-        structure the JSON response with everything as follows:
-            {
-            "Given_Resume_Summary":"",
-            "Given_Jd_Summary":"",
-            "candidate_name": "",
-            "position_applied_for": "",
-            "matching_score": "",
-            "matched_skills": [
-                "",
-                "",
-            ],
-            "non_matched_skills": [
-                "",
-                "",
-                
-            ],
-            "expertise_level": "",
-            "overview": "",
-            "final_conclusion":""}
-        
-        """
+        resume_prompt = p.resume_prompt
+        jd_prompt = p.jd_prompt
+        match_prompt = p.match_prompt
         
         resume_summary = summarize_text_with_gemini(resume_text, resume_prompt)
         jd_summary = summarize_text_with_gemini(jd_text, jd_prompt)

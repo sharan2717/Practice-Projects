@@ -52,9 +52,17 @@ def ResumeMatch_prompt():
 
     return prompt
 
-def AnswerMatch_prompt():
+def resume_prompt():
     resume_prompt = "Create a summary of the provided resume text that highlights the Candidate Name, educational qualifications, technical skills, and experience in organizations of the candidate. Give a single paragraph summarizing the required fields so that it can be used to match a job description. Here is the text:"
+    
+    return resume_prompt
+
+
+def jd_prompt():
     jd_prompt = "Give a detailed summary of the provided job description text that highlights the requirements for the specific position. Provide a single paragraph summary of the required skills for the job that can be matched with the candidate's resume summary. Here is the text:"
+    return jd_prompt
+
+def match_prompt():
     match_prompt = """I have provided a job description and a resume summary. I need you to match the semantic context of both 
         the summaries highlighting the candidate's skills and Job description requirements. Keep a strict matching score such that if 
         the requirements match less than the score should be less.
@@ -79,7 +87,7 @@ def AnswerMatch_prompt():
             "final_conclusion":""}
         
         """
-    return resume_prompt, jd_prompt, match_prompt
+    return match_prompt
 
 def question_generation_prompt(topic,number_of_questions,experience_level):
     prompt = f"""
