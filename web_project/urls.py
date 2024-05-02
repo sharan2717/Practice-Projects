@@ -16,12 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-from interviewerai.views import matching_endpoint, calculate_matching_score_route, whisper_ai
+from interviewerai.views import matching_endpoint, process_resume, whisper_ai
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('whisperAI/', whisper_ai, name='whisperAI'),
-    path('calculate_matching_score/', calculate_matching_score_route, name = 'calculate_matching_score_route'),
+    # path('calculate_matching_score/', calculate_matching_score_route, name = 'calculate_matching_score_route'),
     path('matching/', matching_endpoint, name = 'matching_endpoint'),
+    path('process/', process_resume, name = 'process_resume'),
     path('interviewerai/', include('interviewerai.urls')),
+   
 ]

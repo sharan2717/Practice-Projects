@@ -24,21 +24,43 @@ def QA_prompt(question, candidate_response):
                 """
     return prompt
 
-def ResumeMatch_prompt():
-    return ""
 
-def AnswerMatch_prompt():
-    prompt="""
-    Your are going to access a candidate answer ,so Compare the question and Candidate_answer and give the relevancy score for them.Strictly give response in the mentioned JSON format
-Instructions:
-1. Provide the relevancy score in percentage
-2. Explain the relevancy of two paragraphs
-JSON Response Format:
-{{
-"Relevancy score": "",
-"Comparison": ""
-}}  """
-    return prompt
+def resume_prompt():
+    resume_prompt = "Create a summary of the provided resume text that highlights the Candidate Name, educational qualifications, technical skills, and experience in organizations of the candidate. Give a single paragraph summarizing the required fields so that it can be used to match a job description. Here is the text:"
+    
+    return resume_prompt
+
+
+def jd_prompt():
+    jd_prompt = "Give a detailed summary of the provided job description text that highlights the requirements for the specific position. Provide a single paragraph summary of the required skills for the job that can be matched with the candidate's resume summary. Here is the text:"
+    return jd_prompt
+
+def match_prompt():
+    match_prompt = """I have provided a job description and a resume summary. I need you to match the semantic context of both 
+        the summaries highlighting the candidate's skills and Job description requirements. Keep a strict matching score such that if 
+        the requirements match less than the score should be less.
+        structure the JSON response with everything as follows:
+            {
+            "Given_Resume_Summary":"",
+            "Given_Jd_Summary":"",
+            "candidate_name": "",
+            "position_applied_for": "",
+            "matching_score": "",
+            "matched_skills": [
+                "",
+                "",
+            ],
+            "non_matched_skills": [
+                "",
+                "",
+                
+            ],
+            "expertise_level": "",
+            "overview": "",
+            "final_conclusion":""}
+        
+        """
+    return match_prompt
 
 def question_generation_prompt(topic,number_of_questions,experience_level):
     prompt = f"""
